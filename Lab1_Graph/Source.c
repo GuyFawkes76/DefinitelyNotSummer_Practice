@@ -196,17 +196,16 @@ void main() {
 		return;
 	}
 	pQueue->path[0] = field[initRank][initFile][0];
-	pQueueLast = &pQueue;
+	pQueueLast = pQueue;
 	while (1) {
-		pTemp = pQueue;
-		if (getPosSteps(pQueue, pQueueLast, field, ranksAmount, filesAmount)) {
+		if (getPosSteps(pQueue, &pQueueLast, field, ranksAmount, filesAmount)) {
 			break;
 		}
-		/*if (pTemp == pQueue) {
+		if (!(pQueue->pNext)) {
 			printf("Ќе удалось найти путь с указанными параметрами.");
 			break;
-		}*/
-		//pQueue = pQueue->pNext;
+		}
+		pQueue = pQueue->pNext;
 	}
 	clearQueue(pQueue);
 	for (i = 0; i < ranksAmount; i++) {
@@ -216,5 +215,5 @@ void main() {
 		free(field[i]);
 	}
 	free(field);
-	//printf("Brk");
+	//printf("Brk"); //
 }
