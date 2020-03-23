@@ -1,4 +1,4 @@
-/*	Программа Граф_Конь
+/*	Программа Граф_Конь (Graph_Horse)
 *
 *	Текущий файл mygraphlib.c содержит тела связанных с графом функций, необходимых для решения этой задачи.
 *
@@ -9,7 +9,7 @@
 #include "mygraphlib.h"
 #include <stddef.h>
 
-int getPosSteps(struct queue* pQueueIn, struct queue ** pQueueLast, int *** curField, int ranksAmount, int filesAmount) {
+int getPosSteps(struct queue* pQueueIn, struct queue ** pQueueLast, int *** curField, int ranksAmount, int filesAmount) { //Функция, добавляющая возможные ходы в очередь.
 	//curField[pQueueIn->curRank][pQueueIn->curFile][1] = VISITED;
 
 	int newRank = pQueueIn->curRank - HORSEFIRSTOFFSET,										//Новый номер ряда.
@@ -300,7 +300,7 @@ int getPosSteps(struct queue* pQueueIn, struct queue ** pQueueLast, int *** curF
 	return 0;
 }
 
-int clearQueue(struct queue * pQueue) {
+int clearQueue(struct queue * pQueue) {		//Функция, очищающая очередь.
 	struct queue * pTemp;
 	for ( ; pQueue->pPrev; pQueue = pQueue->pPrev)	//Идём в начало очереди.
 		;
