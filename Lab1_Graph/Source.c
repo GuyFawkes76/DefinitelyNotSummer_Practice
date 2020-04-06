@@ -41,10 +41,87 @@ void main() {
 		i,					//Счётчик.
 		j,					//Счётчик.
 		fillerCnt = 1;		//Счётчик для заполнения поля числами от 1 и далее.
-	struct queue* pQueue = NULL,	//Указатель на начало очереди для горизонтального обхода графа. В дальнейшем - элемент очереди.
+	struct list* pQueue = NULL,	//Указатель на начало очереди для горизонтального обхода графа. В дальнейшем - элемент очереди.
 		* pQueueLast = NULL,		//Указатель на последний элемент очереди.
 		* pTemp;					//Временный указатель на предыдущий элемент очереди для определения, сдвинулась ли очередь вперёд.
 	setlocale(LC_ALL, "RUS");
+	greetUser();
+	//Ввод количества рядов и клеток
+	inputRanksAndFiles(&ranksAmount, &filesAmount);
+	//Выделение памяти для поля и заполнение его числами.
+	createAndFillField(&field, ranksAmount, filesAmount);
+	//Ввод начальных координат
+	inputInitPos(&initRank, &initFile, ranksAmount, filesAmount);
+	//Ввод конечных координат
+	inputTargetPos(&targetRank, &targetFile, ranksAmount, filesAmount);
+	//Ввод координат первой запрещённой клетки.
+	inputProhPos(&prohRank1, &prohFile1, ranksAmount, filesAmount);
+	//Ввод координат второй запрещённой клетки.
+	inputProhPos(&prohRank2, &prohFile2, ranksAmount, filesAmount);
+	//Проверка на совпадение координат запрещённых клеток с начальными и предупреждение об этом пользователя.
+	notifyAboutSameCoords(initRank, initFile, targetRank, targetFile, prohRank1, prohFile1, prohRank2, prohFile2);
+
+	//Пометка указанных запрещённых клеток как посещённых.
+	field[prohRank1][prohFile1][1] = VISITED;
+	field[prohRank2][prohFile2][1] = VISITED;
+	field[targetRank][targetFile][1] = TARGET;		//Пометка целевой клетки как целевой
+	field[initRank][initFile][1] = VISITED;
+	//Выделение памяти для первого элемента очереди.
+	pQueue = createFirstElem(field, initRank, initFile);
+	pQueueLast = pQueue;
+	//Блок вызова функции, добавляющей в очередь возможные ходы.
+	while (1) {
+		if (getPosSteps(pQueue, &pQueueLast, field, ranksAmount, filesAmount))
+			break;
+		if (!(pQueue->pNext)) {
+			printf("Не удалось найти путь с указанными параметрами.");
+			break;
+		}
+		pQueue = pQueue->pNext;
+	}
+	//Блок очистки памяти.
+	clearQueue(pQueue);
+	field = freeMyField(field, ranksAmount, filesAmount);
+	//printf("Brk"); 
+}
+
+int createAndFillField(int **** field, int ranksAmount, int filesAmount) {
+	int fillerCnt = 1;	//Счётчик для заполнения поля числами от 1 и далее.
+	if (!(*field = malloc(ranksAmount * sizeof(int**)))) {	//Проверяем на NULL при выделении памяти
+		printf("Ошибка выделения памяти для массива. Поробуйте закрыть ненужные приложения и повторить попытку.");
+		exit(0);
+	}
+	for (int i = 0; i < ranksAmount; i++) {
+		(*field)[i] = NULL;
+		if (!((*field)[i] = malloc(filesAmount * sizeof(int*)))) {	//Проверяем на NULL при выделении памяти
+			printf("Ошибка выделения памяти для массива. Поробуйте закрыть ненужные приложения и повторить попытку.");
+			exit(0);
+		}
+	}
+	for (int i = 0; i < ranksAmount; i++) {
+		for (int j = 0; j < filesAmount; j++) {
+			if (!((*field)[i][j] = malloc(2 * sizeof(int)))) {	//Проверяем на NULL при выделении памяти
+				printf("Ошибка выделения памяти для массива. Поробуйте закрыть ненужные приложения и повторить попытку.");
+				exit(0);
+			}
+			(*field)[i][j][0] = fillerCnt++;
+			//printf(" %d", field[i][j][0]);
+			(*field)[i][j][1] = NOTVISITED;
+		}
+	}
+}
+
+int freeMyField(int *** field, int ranksAmount, int filesAmount) {
+	for (int i = 0; i < ranksAmount; i++) {
+		for (int j = 0; j < filesAmount; j++) {
+			free(field[i][j]);	//Всё ок, в ходе работы inField не может стать null'ом
+		}
+		free(field[i]);
+	}
+	free(field);
+}
+
+int greetUser() {
 	printf("Вас приветствует программа Граф_Конь.\n\n"
 		"Программа предназначена для выполнения задания при следующих условиях:\n\n"
 		"Имеется поле необычной формы, заданного размера. Каждая клетка пронумерована числами от 1 и далее начиная с верхнего ряда слева направо.\n"
@@ -56,179 +133,103 @@ void main() {
 		"Найти путь фигуры из заданного начального положения в заданное конечное положение(положения задаются номерами строк и позиций в строке)\n"
 		"и вывести на экран последовательность чисел, стоящих в клетках этого пути при условии, что нельзя вставать фигурой на две заданные запрещённые клетки.\n\n"
 		"Автор: Степаненко Кирилл\nГруппа: ИВТ-13БО\n");
-	//Блок ввода и выделения памяти
+}
 
-	printf("Введите количество рядов в поле: ");
-	if (!scanf("%d", &ranksAmount)) {
-		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
-	}
-	if (ranksAmount < 2) {
-		printf("Количество рядов в поле не может быть меньше двух, в этом случае задача не имеет смысла.");
-		return;
-	}
-	printf("Введите количество клеток в ряду: ");
-	if (!scanf("%d", &filesAmount)) {
-		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
-	}
-	if (filesAmount < 2) {
-		printf("Количество клеток в ряду не может быть меньше двух, в этом случае задача не имеет смысла.");
-		return;
-	}
-	//Блок выделения памяти
-	if (!(field = malloc(ranksAmount * sizeof(int**)))) {	//Проверяем на NULL при выделении памяти
-		printf("Ошибка выделения памяти для массива. Поробуйте закрыть ненужные приложения и повторить попытку.");
-		return;
-	}
-	for (i = 0; i < ranksAmount; i++) {
-		field[i] = NULL;
-		if (!(field[i] = malloc(filesAmount * sizeof(int*)))) {	//Проверяем на NULL при выделении памяти
-			printf("Ошибка выделения памяти для массива. Поробуйте закрыть ненужные приложения и повторить попытку.");
-			return;
-		}
-	}
-	for (i = 0; i < ranksAmount; i++) {
-		for (j = 0; j < filesAmount; j++) {
-			if (!(field[i][j] = malloc(2 * sizeof(int)))) {	//Проверяем на NULL при выделении памяти
-				printf("Ошибка выделения памяти для массива. Поробуйте закрыть ненужные приложения и повторить попытку.");
-				return;
-			}
-			field[i][j][0] = fillerCnt++;
-			//printf(" %d", field[i][j][0]);
-			field[i][j][1] = NOTVISITED;
-		}
-	}
-	//Блок ввода начальных координат
+int inputInitPos(int * initRank, int * initFile, int ranksAmount, int filesAmount) {
 	printf("Обратите внимание, нумерация рядов и клеток начинается с 0!\n");
 	printf("Введите номер ряда, в котором находится конь в начале: ");
-	if (!scanf("%d", &initRank)) {
+	if (!scanf("%d", &(*initRank))) {
 		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
+		exit(0);
 	}
-	if ((initRank >= ranksAmount) || (initRank < 0)) {
+	if (((*initRank) >= ranksAmount) || ((*initRank) < 0)) {
 		printf("Введённый номер ряда не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
+		exit(0);
 	}
 	printf("Введите номер клетки внутри ряда, в которой находится конь в начале: ");
-	if (!scanf("%d", &initFile)) {
+	if (!scanf("%d", &(*initFile))) {
 		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
+		exit(0);
 	}
-	if ((initFile >= filesAmount) || (initFile < 0)) {
+	if (((*initFile) >= filesAmount) || ((*initFile) < 0)) {
 		printf("Введённый номер клетки не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
+		exit(0);
 	}
-	//Блок ввода конечных координат
-	printf("Введите номер ряда, в котором конь должен находиться в конце: ");
-	if (!scanf("%d", &targetRank)) {
+}
+
+int inputProhPos(int * prohRank, int * prohFile, int ranksAmount, int filesAmount) {
+	printf("Введите номер ряда запрещённой клетки: ");
+	if (!scanf("%d", &(*prohRank))) {
 		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
+		exit(0);
 	}
-	if ((targetRank >= ranksAmount) || (targetRank < 0)) {
+	if (((*prohRank) >= ranksAmount) || ((*prohRank) < 0)) {
 		printf("Введённый номер ряда не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
+		exit(0);
+	}
+	printf("Введите номер запрещённой клетки внутри ряда: ");
+	if (!scanf("%d", &(*prohFile))) {
+		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
+		exit(0);
+	}
+	if (((*prohFile) >= filesAmount) || ((*prohFile) < 0)) {
+		printf("Введённый номер клетки не находится в поле. Проверьте правильность ввода и повторите попытку.");
+		exit(0);
+	}
+}
+
+int inputRanksAndFiles(int * ranksAmount, int * filesAmount) {
+	printf("Введите количество рядов в поле: ");
+	if (!scanf("%d", &(*ranksAmount))) {
+		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
+		exit(0);
+	}
+	if ((*ranksAmount) < 2) {
+		printf("Количество рядов в поле не может быть меньше двух, в этом случае задача не имеет смысла.");
+		exit(0);
+	}
+	printf("Введите количество клеток в ряду: ");
+	if (!scanf("%d", &(*filesAmount))) {
+		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
+		exit(0);
+	}
+	if ((*filesAmount) < 2) {
+		printf("Количество клеток в ряду не может быть меньше двух, в этом случае задача не имеет смысла.");
+		exit(0);
+	}
+}
+
+int inputTargetPos(int * targetRank, int * targetFile, int ranksAmount, int filesAmount) {
+	printf("Введите номер ряда, в котором конь должен находиться в конце: ");
+	if (!scanf("%d", &(*targetRank))) {
+		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
+		exit(0);
+	}
+	if (((*targetRank) >= ranksAmount) || ((*targetRank) < 0)) {
+		printf("Введённый номер ряда не находится в поле. Проверьте правильность ввода и повторите попытку.");
+		exit(0);
 	}
 	printf("Введите номер клетки внутри ряда, в которой конь должен находиться в конце: ");
-	if (!scanf("%d", &targetFile)) {
+	if (!scanf("%d", &(*targetFile))) {
 		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
+		exit(0);
 	}
-	if ((targetFile >= filesAmount) || (targetFile < 0)) {
+	if (((*targetFile) >= filesAmount) || ((*targetFile) < 0)) {
 		printf("Введённый номер клетки не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
+		exit(0);
 	}
-	//Блок ввода координат первой запрещённой клетки.
-	printf("Введите номер ряда первой запрещённой клетки: ");
-	if (!scanf("%d", &prohRank1)) {
-		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
-	}
-	if ((prohRank1 >= ranksAmount) || (prohRank1 < 0)) {
-		printf("Введённый номер ряда не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
-	}
-	printf("Введите номер первой запрещённой клетки внутри ряда: ");
-	if (!scanf("%d", &prohFile1)) {
-		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
-	}
-	if ((prohFile1 >= filesAmount) || (prohFile1 < 0)) {
-		printf("Введённый номер клетки не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
-	}
-	//Блок ввода координат второй запрещённой клетки.
-	printf("Введите номер ряда второй запрещённой клетки: ");
-	if (!scanf("%d", &prohRank2)) {
-		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
-	}
-	if ((prohRank2 >= ranksAmount) || (prohRank2 < 0)) {
-		printf("Введённый номер ряда не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
-	}
-	printf("Введите номер второй запрещённой клетки внутри ряда: ");
-	if (!scanf("%d", &prohFile2)) {
-		printf("Неверный формат вводимых данных. Проверьте правильность ввода и попробуйте снова.");
-		return;
-	}
-	if ((prohFile2 >= filesAmount) || (prohFile2 < 0)) {
-		printf("Введённый номер клетки не находится в поле. Проверьте правильность ввода и повторите попытку.");
-		return;
-	}
+}
 
-	//Проверка на совпадение координат запрещённых клеток с начальными и предупреждение об этом пользователя.
-	if (((prohRank1 == initRank) && (prohFile1 == initFile)) || ((prohRank2 == initRank) && (prohFile2 == initFile))) {
-		printf("Координаты одной или обоих запрещённых клеток совпадают с начальной позицией коня.\n" 
+int notifyAboutSameCoords(int initRank, int initFile, int targetRank, int targetFile, int prohRank1, int prohFile1, int prohRank2, int prohFile2) {
+	if ((prohRank1 == initRank && prohFile1 == initFile) || (prohRank2 == initRank && prohFile2 == initFile)) {
+		printf("Координаты одной или обоих запрещённых клеток совпадают с начальной позицией коня.\n"
 			"Предполагается отсутствие запрещённых клеток, координаты которых совпадают с начальной позицией.\n");
 	}
-	if (((prohRank1 == targetRank) && (prohFile1 == targetFile)) || ((prohRank2 == targetRank) && (prohFile2 == targetFile))) {
+	if ((prohRank1 == targetRank && prohFile1 == targetFile) || (prohRank2 == targetRank && prohFile2 == targetFile)) {
 		printf("Координаты одной или обоих запрещённых клеток совпадают с конечной позицией коня.\n"
 			"Предполагается отсутствие запрещённых клеток, координаты которых совпадают с конечной позицией.\n");
 	}
-	if ((prohRank1 == prohRank2) && (prohFile1 == prohFile2)) {
+	if (prohRank1 == prohRank2 && prohFile1 == prohFile2) {
 		printf("Координаты указанных запрещённых точек совпадают. Запрещённая точка будет одна.\n");
 	}
-	//Пометка указанных запрещённых клеток как посещённых.
-	field[prohRank1][prohFile1][1] = VISITED;
-	field[prohRank2][prohFile2][1] = VISITED;
-	field[targetRank][targetFile][1] = TARGET;		//Пометка целевой клетки как целевой
-	field[initRank][initFile][1] = VISITED;
-	//Выделеие памяти для первого элемента очереди.
-	if (!(pQueue = malloc(sizeof(struct queue)))) {
-		printf("Ошибка выделения памяти для очереди. Попробуйте закрыть ненужные приложения и повторить попытку.");
-		return;
-	}
-	pQueue->curRank = initRank;
-	pQueue->curFile = initFile;
-	pQueue->curStep = 0;
-	pQueue->pPrev = NULL;
-	pQueue->pNext = NULL;
-	if (!(pQueue->path = malloc(sizeof(int)))) {
-		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторить попытку.");
-		return;
-	}
-	pQueue->path[0] = field[initRank][initFile][0];
-	pQueueLast = pQueue;
-	//Блок вызова функции, добавляющей в очередь возможные ходы.
-	while (1) {
-		if (getPosSteps(pQueue, &pQueueLast, field, ranksAmount, filesAmount)) {
-			break;
-		}
-		if (!(pQueue->pNext)) {
-			printf("Не удалось найти путь с указанными параметрами.");
-			break;
-		}
-		pQueue = pQueue->pNext;
-	}
-	//Блок очистки памяти.
-	clearQueue(pQueue);
-	for (i = 0; i < ranksAmount; i++) {
-		for (j = 0; j < filesAmount; j++) {
-			free(field[i][j]);
-		}
-		free(field[i]);
-	}
-	free(field);
-	//printf("Brk"); //
 }

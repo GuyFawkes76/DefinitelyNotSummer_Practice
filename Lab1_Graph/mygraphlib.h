@@ -14,16 +14,24 @@
 #define NOTVISITED 0			//Константа, обозначающая непосещённую клетку
 #define VISITED 1				//Константа, обозначающая посещённую или запрещённую клетку
 #define TARGET 2				//Константа, обозначающая целевую клетку
-struct queue {		//Список, представляющий собой почти "очередь".
+struct list {		//Список, представляющий собой почти "очередь".
 	int curRank;	//Номер текущего ряда
 	int curFile;	//Номер текущей клетки
 	int curStep;	//Номер шага
 	int* path;		//Массив целых чисел, показывающих путь к текущей клетке
-	struct queue * pNext;	//Указатель на предыдущий элемент в очереди
-	struct queue * pPrev;	//Указатель на следующий элемент в очереди
+	struct list * pNext;	//Указатель на предыдущий элемент в очереди
+	struct list * pPrev;	//Указатель на следующий элемент в очереди
 };
+/*Функция, добавляющая возможные ходы в очередь. Выделяет память, расширяя список.
+!!Не забываем очищать память!!*/
+int getPosSteps(struct list * pQueue, struct list ** pQueueLast, int *** curField, int ranksAmount, int filesAmount);
 
-int getPosSteps(struct queue * pQueue, struct queue ** pQueueLast, int *** curField, int ranksAmount, int filesAmount);
-int clearQueue(struct queue * pQueue);
+//Внутренняя функция, проверяющая возможность совершения шага и добавляющая его в очередь в случае, если он возможен.
+int checkStep(struct list** pQueueLast, struct list* pQueueIn, int*** curField, int newRank, int newFile);
 
-#endif
+//Функция, очищающая очередь. pQueue - любой элемент очереди.
+int clearQueue(struct list * pQueue);
+
+//Функция, выделяющая память для первого элемента очереди
+struct list * createFirstElem(int*** field, int initRank, int initFile);
+#endif	//MYGRAPHLIB_H
