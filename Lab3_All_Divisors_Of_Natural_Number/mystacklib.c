@@ -5,3 +5,11 @@
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
 //
+#include "mystacklib.h"
+
+void pop(stackElement element) {
+
+}
+void push() {
+
+}

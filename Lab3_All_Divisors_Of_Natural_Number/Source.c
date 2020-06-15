@@ -15,3 +15,15 @@
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
 //
+#include <locale.h>
+#include <malloc.h>
+#include <math.h>
+#include <stdio.h>
+#include "mystacklib.h"
+
+void main() {
+	int number;
+	stackElement * firstHOD;	//Указатель на первую половину делителей (first Half Of Divisors) - до sqrt из number;
+	stackElement * secondHOD;	//Указатель на вторую половину делителей (second Half Of Divisors) - после sqrt из number;
+
+}
