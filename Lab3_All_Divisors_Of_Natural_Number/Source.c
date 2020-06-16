@@ -22,7 +22,10 @@
 #include <stdio.h>
 #include "mystacklib.h"
 
+//Функция, заполняющая первую половину стека делителей - до корня из number
 stackElement* fillFirstStack(int number, double numberSqrt);
+//Функция, заполняющая вторую половину стека делителей - после корня из number
+stackElement* fillSecondStack(stackElement* element, int number);
 
 void main() {
 	int number;					//Введённое число.
@@ -40,20 +43,35 @@ void main() {
 	}
 	if (number <= 0) {
 		printf("Введённое число не является натуральным, повторите попытку.");
+		return;
 	}
 	numberSqrt = sqrt(number);
 	firstHOD = fillFirstStack(number, numberSqrt);
+	secondHOD = fillSecondStack(firstHOD, number);
+	printf("Делители числа %d:", number);
+	popAndPrintDivisors(firstHOD, secondHOD);
 }
 
 stackElement * fillFirstStack(int number, double numberSqrt) {
 	int divisor;						//Текущее число, проверяемое на делитель.
 	stackElement * curElement = NULL;	//Указатель на текущий элемент.
-	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем
+	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем.
 		if (number % divisor == 0) {
 			push(&curElement, divisor);
 		}
 	}
 	return curElement;
+}
+
+stackElement * fillSecondStack(stackElement * element, int number) {
+	stackElement * curElement1;				//Указатель на текущий элемент полученного стека делителей.
+	stackElement * curElement2 = NULL;		//Указатель на текущий элемент формируемого стека делителей
+	for (curElement1 = element; curElement1; curElement1 = curElement1->next) {
+		if (number / curElement1->value != curElement1->value) {
+			push(&curElement2, number / curElement1->value);
+		}
+	}
+	return curElement2;
 }
 
 int greetUser() {	//Функция, выводящая приветствие и описание работы программы.
@@ -68,4 +86,15 @@ int greetUser() {	//Функция, выводящая приветствие и описание работы программы.
 		"Вывести все делители заданного числа n в порядке возрастания\n"
 		"(без дополнительной сортировки, но с использованием стеков).\n\n"
 		"Автор: Степаненко Кирилл\n Группа: ИВТ-13БО.\n\n");
+}
+
+int popAndPrintDivisors(stackElement * firstHOD, stackElement * secondHOD) {
+	stackElement * curElement;				//Указатель на текущий элемент стека (сначала одного, потом второго) делителей.
+	for (curElement = firstHOD; curElement; ) {
+		printf(" %d", pop(&curElement));
+	}
+	for (curElement = secondHOD; curElement; ) {
+		printf(" %d", pop(&curElement));
+	}
+	printf(".");
 }
