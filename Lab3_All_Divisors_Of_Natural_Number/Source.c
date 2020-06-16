@@ -15,11 +15,14 @@
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
 //
+#define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdio.h>
 #include "mystacklib.h"
+
+stackElement* fillFirstStack(int number, double numberSqrt);
 
 void main() {
 	int number;					//Введённое число.
@@ -38,14 +41,22 @@ void main() {
 	if (number <= 0) {
 		printf("Введённое число не является натуральным, повторите попытку.");
 	}
-	firstHOD = fillFirstStack(number);
+	numberSqrt = sqrt(number);
+	firstHOD = fillFirstStack(number, numberSqrt);
 }
 
-stackElement * fillFirstStack(int number) {
-	stackElement curElement = createElement();
+stackElement * fillFirstStack(int number, double numberSqrt) {
+	int divisor;						//Текущее число, проверяемое на делитель.
+	stackElement * curElement = NULL;	//Указатель на текущий элемент.
+	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем
+		if (number % divisor == 0) {
+			push(&curElement, divisor);
+		}
+	}
+	return curElement;
 }
 
-void greetUser() {	//Функция, выводящая приветствие и описание работы программы.
+int greetUser() {	//Функция, выводящая приветствие и описание работы программы.
 	printf("Вас привествует программа All_Divisors_Of_Natural_Number.\n\n"
 		"Программа преназначена для выполнения задания при следующих условиях:\n\n"
 		"При нахождении делителей натурального числа количество проверок возможных делителей\n"
@@ -56,5 +67,5 @@ void greetUser() {	//Функция, выводящая приветствие и описание работы программы.
 		"Задание:\n\n"
 		"Вывести все делители заданного числа n в порядке возрастания\n"
 		"(без дополнительной сортировки, но с использованием стеков).\n\n"
-		"Автор: Степаненко Кирилл\n Группа: ИВТ-13БО.\n");
+		"Автор: Степаненко Кирилл\n Группа: ИВТ-13БО.\n\n");
 }

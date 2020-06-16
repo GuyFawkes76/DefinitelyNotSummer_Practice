@@ -8,14 +8,20 @@
 
 #ifndef MYSTACKLIB_H
 #define MYSTACKLIB_H
-typedef struct stackElement {
-	int value;
-	struct stackElement * next;
-} stackElement;
+typedef struct stackElement {	//Структура, представляющая собой элемент стека
+	int value;					//Значение, хранящееся в элементе стека
+	struct stackElement * next;	//Указатель на следующий элемент стека
+} stackElement;					//Обычный typedef, чтобы не писать везде struct
 
+//Функция, создающая новый элемент стека. На вход принимает значение, которое помещает в элемент. Возвращает указатель на созданный элемент.
+//!!!Не забываем очищать память, в случае чего!!!
 stackElement* createElement(int inData);
-int getValue(stackElement* element);
+
+//Функция, добавляющая новый элемент в стек. На вход принимает указатель на указатель на текущий элемент и значение, которое помещает в элемент.
+//Вызывает createElement, !!!Не забываем очищать память, вызывая pop!!!
 void push(stackElement** prevElement, int value);
+
+//Функция, удаляющая элемент из стека и возвращающая его значение. На вход принимает указатель на указатель на элемент.
 int pop(stackElement** element);
 
 #endif	//MYSTACKLIB_H
