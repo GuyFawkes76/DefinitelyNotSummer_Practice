@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{2DE06450-6256-48D0-9470-389E79C8E784}</ProjectGuid>
-    <RootNamespace>Lab2GraphChain</RootNamespace>
+    <RootNamespace>Lab2GraphDijkstra</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Lab2_Graph_Dijkstra</ProjectName>
   </PropertyGroup>

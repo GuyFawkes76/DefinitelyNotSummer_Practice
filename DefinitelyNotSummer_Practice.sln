@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab1_Graph_Horse", "Lab1_Graph\Lab1_Graph.vcxproj", "{76C3259C-178A-4CDF-99F9-0D3431E57295}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab2_Graph_Chain", "Lab2_Graph_Chain\Lab2_Graph_Chain.vcxproj", "{2DE06450-6256-48D0-9470-389E79C8E784}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab3_All_Divisors_Of_Natural_Number", "Lab3_All_Divisors_Of_Natural_Number\Lab3_All_Divisors_Of_Natural_Number.vcxproj", "{359DED7E-180E-4611-B31C-0DF9A7EFE360}"
 EndProject
 Global
@@ -25,14 +23,6 @@ Global
 		{76C3259C-178A-4CDF-99F9-0D3431E57295}.Release|x64.Build.0 = Release|x64
 		{76C3259C-178A-4CDF-99F9-0D3431E57295}.Release|x86.ActiveCfg = Release|Win32
 		{76C3259C-178A-4CDF-99F9-0D3431E57295}.Release|x86.Build.0 = Release|Win32
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Debug|x64.ActiveCfg = Debug|x64
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Debug|x64.Build.0 = Debug|x64
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Debug|x86.ActiveCfg = Debug|Win32
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Debug|x86.Build.0 = Debug|Win32
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Release|x64.ActiveCfg = Release|x64
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Release|x64.Build.0 = Release|x64
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Release|x86.ActiveCfg = Release|Win32
-		{2DE06450-6256-48D0-9470-389E79C8E784}.Release|x86.Build.0 = Release|Win32
 		{359DED7E-180E-4611-B31C-0DF9A7EFE360}.Debug|x64.ActiveCfg = Debug|x64
 		{359DED7E-180E-4611-B31C-0DF9A7EFE360}.Debug|x64.Build.0 = Debug|x64
 		{359DED7E-180E-4611-B31C-0DF9A7EFE360}.Debug|x86.ActiveCfg = Debug|Win32
