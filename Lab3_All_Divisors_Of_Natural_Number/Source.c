@@ -38,11 +38,11 @@ void main() {
 	if (number <= 0) {
 		printf("Введённое число не является натуральным, повторите попытку.");
 	}
-	firstHOD = fillFirstStack();
+	firstHOD = fillFirstStack(number);
 }
 
-stackElement * fillFirstStack() {
-
+stackElement * fillFirstStack(int number) {
+	stackElement curElement = createElement();
 }
 
 void greetUser() {	//Функция, выводящая приветствие и описание работы программы.

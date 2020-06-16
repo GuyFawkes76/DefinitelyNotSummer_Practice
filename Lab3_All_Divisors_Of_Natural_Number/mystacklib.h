@@ -12,7 +12,10 @@ typedef struct stackElement {
 	int value;
 	struct stackElement * next;
 } stackElement;
-void pop(stackElement element); 
-void push();
+
+stackElement* createElement(int inData);
+int getValue(stackElement* element);
+void push(stackElement** prevElement, int value);
+int pop(stackElement** element);
 
 #endif	//MYSTACKLIB_H
