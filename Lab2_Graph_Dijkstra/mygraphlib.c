@@ -7,13 +7,60 @@
 //
 #include <climits>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "mygraphlib.h"
+
+int * allocArray(int size) {
+	int * temp;		//Указатель для выделения памяти
+	if (!(temp = malloc(size * sizeof(int)))) {
+		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
+		exit(0);
+	}
+	return temp;
+}
+
+//Функция, выделяющая память под матрицу и изменяющая значения на бесконечность. На вход принимает количество вершин.
+int** allocateAdjMatrix(int verticesAmount) {
+	int** allocMatrix = NULL;
+	if (!(allocMatrix = malloc(verticesAmount * sizeof(int*)))) {
+		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
+		exit(0);
+	}
+	for (int i = 0; i < verticesAmount; i++) {
+		if (!(allocMatrix[i] = malloc(verticesAmount * sizeof(int)))) {
+			printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
+			exit(0);
+		}
+		for (int j = 0; j < verticesAmount; j++) {
+			allocMatrix[i][j] = INT_MAX;
+		}
+	}
+	return allocMatrix;
+}
+
+void fillAdjMatrix(int** matrix, int verticesAmount) {
+	printf("\nВведите матрицу смежности, разделяя элементы пробелом:\n");
+	for (int i = 0; i < verticesAmount; i++) {
+		for (int j = 0; j < verticesAmount; j++) {
+			if (!scanf("%d", &matrix[i][j])) {
+				printf("Введённая строка не является целым числом. Повторите попытку.");
+				exit(0);
+			}
+			if (matrix[i][j] < 0) {
+				printf("Алгоритм Дейкстры не работает с рёбрами отрицательной длины. Повторите попытку.");
+				exit(0);
+			}
+		}
+	}
+}
+
 
 void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int startingVertix) {
 	int seenVerticesCnt,		//Сколько вершин графа мы уже обошли.
 		curMin,					//Текущий минимальный вес ребра.
-		nextVertixNum;			//Номер следующей вершины.
+		flagAnyPath = 0,		//Флаг, указыващий, прошёл ли алгоритм куда-нибудь или нет.
+		nextVertixNum = 0;		//Номер следующей вершины.
 	int * costFromStart,		//Указатель на массив с весами вершин.
 		* previousVertix,		//Указатель на массив предыдущих вершин.
 		* visitedVerticesFlag;	//Указатель на массив флагов, обозначающих посещение или непосещение вершины.
@@ -22,24 +69,16 @@ void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int starting
 	for (int i = 0; i < verticesAmount; i++) {
 		for (int j = 0; j < verticesAmount; j++) {
 			if (adjMatrix[i][j] == 0) {
-				adjMatrix[i][j] = LARGE_INT;
+				adjMatrix[i][j] = INT_MAX;
 			}
 		}
 	}
 
 	//Выделение памяти для costFromStart, previousVertix, visitedVerticesFlag.
-	if (!(costFromStart = malloc(verticesAmount * sizeof(int)))) {
-		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
-		exit(0);
-	}
-	if (!(previousVertix = malloc(verticesAmount * sizeof(int)))) {
-		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
-		exit(0);
-	}
-	if (!(visitedVerticesFlag = malloc(verticesAmount * sizeof(int)))) {
-		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
-		exit(0);
-	}
+	costFromStart = allocArray(verticesAmount);
+	previousVertix = allocArray(verticesAmount);
+	visitedVerticesFlag = allocArray(verticesAmount);
+
 	//Заполняем массивы с весами путей, предыдущими вершинами, и посещёными вершинами.
 	for (int i = 0; i < verticesAmount; i++) {
 		costFromStart[i] = adjMatrix[startingVertix][i];
@@ -53,8 +92,8 @@ void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int starting
 	//Ставим счётчик посещённых вершин на 1.
 	seenVerticesCnt = 1;
 	//Выполняем цикл до тех пор, пока не посетим все вершины.
-	while (seenVerticesCnt < (verticesAmount - 1)) {
-		curMin = LARGE_INT;
+	while (seenVerticesCnt < verticesAmount - 1) {
+		curMin = INT_MAX;
 
 		//Проверяем, есть ли рёбра с длиной, меньшей curMin.
 		for (int i = 0; i < verticesAmount; i++) {
@@ -62,30 +101,71 @@ void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int starting
 			{
 				curMin = costFromStart[i];
 				nextVertixNum = i;
+				flagAnyPath = 1;
 			}
 		}
 
 		//Помечаем следующую вершину как посещённую.			
 		visitedVerticesFlag[nextVertixNum] = 1;
 		//Ищем, есть ли путь, лучший, чем уже имеющийся.
-		for (int i = 0; i < verticesAmount; i++) {
-			if ((!visitedVerticesFlag[i]) && (curMin + adjMatrix[nextVertixNum][i] < costFromStart[i])) {
-					costFromStart[i] = curMin + adjMatrix[nextVertixNum][i];
-					previousVertix[i] = nextVertixNum;
-			}
-		}
+		for (int i = 0; i < verticesAmount; i++) 
+			if (!visitedVerticesFlag[i])
+				if (curMin != INT_MAX && adjMatrix[nextVertixNum][i] != INT_MAX)
+					if(curMin + adjMatrix[nextVertixNum][i] < costFromStart[i]) {	//Проверить на inf
+						costFromStart[i] = curMin + adjMatrix[nextVertixNum][i];
+						previousVertix[i] = nextVertixNum;
+					}
 		seenVerticesCnt++;
 	}
 	//Выводим путь и расстояние до всех вершин.
-	for (int i = 0; i < verticesAmount; i++) {
-		if ((i != startingVertix) && (costFromStart[i] != LARGE_INT)) {
-			printf("\nСтоимость пути до вершины %d: %d", i, costFromStart[i]);
-			printf("\nПуть=%d", i);
-			int j = i;
-			do {
-				j = previousVertix[j];
-				printf("<<%d", j);
-			} while (j != startingVertix);
+	printCostsDijkstra(verticesAmount, startingVertix, costFromStart, previousVertix, flagAnyPath);
+
+	//Освобождаем память.
+	free(costFromStart);
+	free(previousVertix);
+	free(visitedVerticesFlag);
+}
+
+void freeMatrix(int** matrix, int size) {
+	for (int i = 0; i < size; i++)
+		free(matrix[i]);
+	free(matrix);
+}
+
+void getStartingVertix(int* startingVertix) {
+	printf("\nВведите номер стартовой вершины: ");
+	if (!scanf("%d", startingVertix)) {
+		printf("Введённая строка не является целым числом.");
+		exit(0);
+	}
+}
+
+void getVerticesAmount(int* verticesAmount) {
+	printf("Введите количество вершин в графе: ");
+	if (!scanf("%d", verticesAmount)) {
+		printf("Введено не целое число, повторите попытку.");
+		exit(0);
+	}
+	if (verticesAmount <= 1) {
+		printf("Количество вершин для этой задачи не может быть меньше двух. В противном случае задача не имеет смысла.");
+		exit(0);
+	}
+}
+
+void printCostsDijkstra(int verticesAmount, int * startingVertix, int * costFromStart, int * previousVertix, int flag) {
+	if (flag)
+		for (int i = 0; i < verticesAmount; i++) {
+			if (i != startingVertix && costFromStart[i] != INT_MAX) {
+				printf("\nСтоимость пути до вершины %d: %d", i, costFromStart[i]);
+				printf("\nПуть=%d", i);
+				int j = i;
+				do {
+					j = previousVertix[j];
+					printf("<<%d", j);
+				} while (j != startingVertix);
+			}
 		}
+	else {
+		printf("Пути в другие вершины не найдены.");
 	}
 }
