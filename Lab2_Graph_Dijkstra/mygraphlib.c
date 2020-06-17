@@ -78,12 +78,11 @@ void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int starting
 	}
 	//Выводим путь и расстояние до всех вершин.
 	for (int i = 0; i < verticesAmount; i++) {
-		if (i != startingVertix) {
-			printf("\nСтоимость пути до вершины %d=%d", i, costFromStart[i]);
+		if ((i != startingVertix) && (costFromStart[i] != LARGE_INT)) {
+			printf("\nСтоимость пути до вершины %d: %d", i, costFromStart[i]);
 			printf("\nПуть=%d", i);
 			int j = i;
-			do
-			{
+			do {
 				j = previousVertix[j];
 				printf("<<%d", j);
 			} while (j != startingVertix);

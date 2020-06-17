@@ -34,12 +34,11 @@ void main() {
 	adjMatrix = allocateAdjMatrix(verticesAmount);
 	fillAdjMatrix(adjMatrix, verticesAmount);
 	getStartingVertix(&startingVertix);
+	//Вызов функции, осуществляющей поиск путей и их вывод
 	findCostsDijkstraAndPrint(adjMatrix, verticesAmount, startingVertix);
-
-
-	
 }
 
+//Функция, выделяющая память под матриу. На вход принимает количество вершин.
 int ** allocateAdjMatrix(int verticesAmount) {
 	int ** allocMatrix = NULL;
 	if (!(allocMatrix = malloc(verticesAmount * sizeof(int*)))) {
@@ -58,6 +57,7 @@ int ** allocateAdjMatrix(int verticesAmount) {
 	return allocMatrix;
 }
 
+//Функция, считывающая матрицу.
 int fillAdjMatrix(int ** matrix, int verticesAmount) {
 	printf("\nВведите матрицу смежности, разделяя элементы пробелом:\n");
 	for (int i = 0; i < verticesAmount; i++) {
@@ -73,6 +73,8 @@ int fillAdjMatrix(int ** matrix, int verticesAmount) {
 		}
 	}
 }
+
+//Функция, считывающая количество вершин.
 int getVerticesAmount(int * verticesAmount) {
 	printf("Введите количество вершин в графе: ");
 	if (!scanf("%d", verticesAmount)) {
@@ -84,6 +86,8 @@ int getVerticesAmount(int * verticesAmount) {
 		exit(0);
 	}
 }
+
+//Функция, считывающая номер стартовой вершины.
 int getStartingVertix(int * startingVertix) {
 	printf("\nВведите номер стартовой вершины: ");
 	if (!scanf("%d", startingVertix)) {
@@ -91,6 +95,7 @@ int getStartingVertix(int * startingVertix) {
 		exit(0);
 	}
 }
+//Функция, выдающая информацио о программе и приветствующая пользователя.
 int greetUser() {
 	printf("Вас привествует программа Graph_Dijkstra.\n\n"
 		"Программа предназначена для ввыполнения следующей задачи:\n\n"
