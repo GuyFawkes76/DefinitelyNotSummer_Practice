@@ -12,10 +12,13 @@
 //	Группа: ИВТ-13БО
 //
 #define _CRT_SECURE_NO_WARNINGS
+#include <locale.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "mygraphlib.h"
+
+int** allocateAdjMatrix(int verticesAmount);
 
 void main() {
 	long int * costsList;	//Указатель на массив, содержащий стоимость пути до всех вершин из данной вершины.
@@ -23,13 +26,18 @@ void main() {
 	int verticesAmount;		//Количество вершин в графе.
 	int startingVertix;		//Номер стартовой вершины.
 
+	setlocale(LC_ALL, "RUS");
+
 	//Блок ввода количества вершин в графе и матрицы смежности
 	greetUser();
 	getVerticesAmount(&verticesAmount);
 	adjMatrix = allocateAdjMatrix(verticesAmount);
 	fillAdjMatrix(adjMatrix, verticesAmount);
+	getStartingVertix(&startingVertix);
+	findCostsDijkstra(adjMatrix, verticesAmount, startingVertix);
 
-	findAllVertexCosts(adjMatrix);
+
+	
 }
 
 int ** allocateAdjMatrix(int verticesAmount) {
@@ -44,7 +52,7 @@ int ** allocateAdjMatrix(int verticesAmount) {
 			exit(0);
 		}
 		for (int j = 0; j < verticesAmount; j++) {
-
+			allocMatrix[i][j] = 0;
 		}
 	}
 	return allocMatrix;
@@ -56,6 +64,10 @@ int fillAdjMatrix(int ** matrix, int verticesAmount) {
 		for (int j = 0; j < verticesAmount; j++) {
 			if (!scanf("%d", &matrix[i][j])) {
 				printf("Введённая строка не является целым числом. Повторите попытку.");
+				exit(0);
+			}
+			if (matrix[i][j] < 0) {
+				printf("Алгоритм Дейкстры не работает с рёбрами отрицательной длины. Повторите попытку.");
 				exit(0);
 			}
 		}
@@ -72,8 +84,12 @@ int getVerticesAmount(int * verticesAmount) {
 		exit(0);
 	}
 }
-int getStartingNode() {
-
+int getStartingVertix(int * startingVertix) {
+	printf("Введите номер стартовой вершины: ");
+	if (!scanf("%d", startingVertix)) {
+		printf("Введённая строка не является целым числом.");
+		exit(0);
+	}
 }
 int greetUser() {
 	printf("Вас привествует программа Graph_Dijkstra.\n\n"
