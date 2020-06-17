@@ -34,7 +34,7 @@ void main() {
 	adjMatrix = allocateAdjMatrix(verticesAmount);
 	fillAdjMatrix(adjMatrix, verticesAmount);
 	getStartingVertix(&startingVertix);
-	findCostsDijkstra(adjMatrix, verticesAmount, startingVertix);
+	findCostsDijkstraAndPrint(adjMatrix, verticesAmount, startingVertix);
 
 
 	
@@ -59,7 +59,7 @@ int ** allocateAdjMatrix(int verticesAmount) {
 }
 
 int fillAdjMatrix(int ** matrix, int verticesAmount) {
-	printf("¬ведите матрицу смежности, раздел€€ элементы пробелом:\n");
+	printf("\n¬ведите матрицу смежности, раздел€€ элементы пробелом:\n");
 	for (int i = 0; i < verticesAmount; i++) {
 		for (int j = 0; j < verticesAmount; j++) {
 			if (!scanf("%d", &matrix[i][j])) {
@@ -85,7 +85,7 @@ int getVerticesAmount(int * verticesAmount) {
 	}
 }
 int getStartingVertix(int * startingVertix) {
-	printf("¬ведите номер стартовой вершины: ");
+	printf("\n¬ведите номер стартовой вершины: ");
 	if (!scanf("%d", startingVertix)) {
 		printf("¬ведЄнна€ строка не €вл€етс€ целым числом.");
 		exit(0);

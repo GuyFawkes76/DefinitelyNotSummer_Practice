@@ -8,14 +8,10 @@
 //
 #ifndef MYGRAPHLIB_H
 #define MYGRAPHLIB_H
+#define LARGE_INT 1500000000	//Очень большое значение, играющее роль "бесконечности". 
+								//Потому что если брать INT_MAX, то при сложении возникает переполнение и капут.
 
-typedef struct adjacencyMatrix {
-	int ** matrix;		//Матрица смежности.
-	int vertexAmount;	//Количество вершин в графе.
-} adjacencyMatrix;
-
-void findAllAdjCosts(adjacencyMatrix * adjMatix, long int* costsList, int curVertex);
-void findAllVertexCosts(adjacencyMatrix * adjMatrix);
-int findShortestExcept(adjacencyMatrix * adjMatrix, int curVertex, int exclVertex);
-void findCostsDijkstra(int ** adjMatrix, int verticesAmount, int startingVertix);
+//Функция, находящая и выводящая пути и их веса до всех вершин графа.
+//На вход принимает матрицу смежности, количество вершин и номер стартовой вершины.
+void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int startingVertix);
 #endif	//MYGRAPHLIB_H

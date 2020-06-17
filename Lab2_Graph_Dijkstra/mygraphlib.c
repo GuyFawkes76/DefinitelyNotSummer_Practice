@@ -5,80 +5,88 @@
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
 //
-#include "mygraphlib.h"
 #include <climits>
+#include <malloc.h>
+#include <stdlib.h>
+#include "mygraphlib.h"
 
-void findAllAdjCosts(adjacencyMatrix * adjMatix, long int * costsList, int curVertex) {
-	int curCheckedVertex;	//Номер вершины, стоимость которой проверяется в текущий момент. (!=curVertex)
-
-}
-
-void findAllVertexCosts(adjacencyMatrix * adjMatrix) {
-
-}
-
-void findCostsDijkstra(int** adjMatrix, int verticesAmount, int startingVertix) {
+void findCostsDijkstraAndPrint(int** adjMatrix, int verticesAmount, int startingVertix) {
 	int seenVerticesCnt,		//Сколько вершин графа мы уже обошли.
-		curMin,
-		nextVertixNum;
-	int * costFromStart,
-		* previousVertix,
-		* visitedVerticesFlag;
+		curMin,					//Текущий минимальный вес ребра.
+		nextVertixNum;			//Номер следующей вершины.
+	int * costFromStart,		//Указатель на массив с весами вершин.
+		* previousVertix,		//Указатель на массив предыдущих вершин.
+		* visitedVerticesFlag;	//Указатель на массив флагов, обозначающих посещение или непосещение вершины.
+
 	//Заменим нули на INT_MAX, чтобы получилась матрица веса, подходящая для алгоритма Дейкстры.
 	for (int i = 0; i < verticesAmount; i++) {
 		for (int j = 0; j < verticesAmount; j++) {
 			if (adjMatrix[i][j] == 0) {
-				adjMatrix[i][j] = INT_MAX;
+				adjMatrix[i][j] = LARGE_INT;
 			}
 		}
 	}
 
-	//initialize pred[],distance[] and visited[]
-	for (int i = 0; i < verticesAmount; i++)
-	{
+	//Выделение памяти для costFromStart, previousVertix, visitedVerticesFlag.
+	if (!(costFromStart = malloc(verticesAmount * sizeof(int)))) {
+		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
+		exit(0);
+	}
+	if (!(previousVertix = malloc(verticesAmount * sizeof(int)))) {
+		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
+		exit(0);
+	}
+	if (!(visitedVerticesFlag = malloc(verticesAmount * sizeof(int)))) {
+		printf("Ошибка выделения памяти. Попробуйте закрыть ненужные приложения и повторите попытку.");
+		exit(0);
+	}
+	//Заполняем массивы с весами путей, предыдущими вершинами, и посещёными вершинами.
+	for (int i = 0; i < verticesAmount; i++) {
 		costFromStart[i] = adjMatrix[startingVertix][i];
 		previousVertix[i] = startingVertix;
 		visitedVerticesFlag[i] = 0;
 	}
-
+	//Обнуляем вес пути от старта до самого себя.
 	costFromStart[startingVertix] = 0;
+	//Отмечаем старт пути как посещённый.
 	visitedVerticesFlag[startingVertix] = 1;
+	//Ставим счётчик посещённых вершин на 1.
 	seenVerticesCnt = 1;
+	//Выполняем цикл до тех пор, пока не посетим все вершины.
+	while (seenVerticesCnt < (verticesAmount - 1)) {
+		curMin = LARGE_INT;
 
-	while (seenVerticesCnt < (verticesAmount - 1))
-	{
-		curMin = INT_MAX;
-
-		//nextnode gives the node at minimum distance
-		for (int i = 0; i < verticesAmount; i++)
+		//Проверяем, есть ли рёбра с длиной, меньшей curMin.
+		for (int i = 0; i < verticesAmount; i++) {
 			if ((costFromStart[i] < curMin) && (!visitedVerticesFlag[i]))
 			{
 				curMin = costFromStart[i];
 				nextVertixNum = i;
 			}
+		}
 
-		//check if a better path exists through nextnode			
+		//Помечаем следующую вершину как посещённую.			
 		visitedVerticesFlag[nextVertixNum] = 1;
-		for (int i = 0; i < verticesAmount; i++)
-			if (!visitedVerticesFlag[i])
-				if (curMin + adjMatrix[nextVertixNum][i] < costFromStart[i])
-				{
+		//Ищем, есть ли путь, лучший, чем уже имеющийся.
+		for (int i = 0; i < verticesAmount; i++) {
+			if ((!visitedVerticesFlag[i]) && (curMin + adjMatrix[nextVertixNum][i] < costFromStart[i])) {
 					costFromStart[i] = curMin + adjMatrix[nextVertixNum][i];
 					previousVertix[i] = nextVertixNum;
-				}
+			}
+		}
 		seenVerticesCnt++;
 	}
-}
-
-int findShortestExcept(adjacencyMatrix * adjMatrix, int curVertex, int exclVertex) {
-	int curMin = INT_MAX;			//Текущая найденная минимальная стоимость.
-	int curMinVertex = curVertex;	//Номер вершины с curMin.
-	for (int i = 0; i < adjMatrix->vertexAmount; i++) {
-		if ((adjMatrix->matrix[curVertex][i] != -1) && 
-			(adjMatrix->matrix[curVertex][i] < curMin) &&
-			(i != exclVertex)) {
-			curMin = adjMatrix->matrix[curVertex][i];
-			curMinVertex = i;
+	//Выводим путь и расстояние до всех вершин.
+	for (int i = 0; i < verticesAmount; i++) {
+		if (i != startingVertix) {
+			printf("\nСтоимость пути до вершины %d=%d", i, costFromStart[i]);
+			printf("\nПуть=%d", i);
+			int j = i;
+			do
+			{
+				j = previousVertix[j];
+				printf("<<%d", j);
+			} while (j != startingVertix);
 		}
 	}
 }
