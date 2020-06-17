@@ -14,7 +14,7 @@
 //		
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
-//
+// TODO; Отдельную функцию
 #define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <malloc.h>
