@@ -63,16 +63,16 @@ stackElement * fillFirstStack(int number, double numberSqrt) {
 	return curElement;
 }
 
-stackElement * fillSecondStack(stackElement * element, int number) {
-	stackElement * curElement1;				//”казатель на текущий элемент полученного стека делителей.
-	stackElement * curElement2 = NULL;		//”казатель на текущий элемент формируемого стека делителей
-	for (curElement1 = element; curElement1; curElement1 = curElement1->next) {
-		if (number / curElement1->value != curElement1->value) {
-			push(&curElement2, number / curElement1->value);
-		}
-	}
-	return curElement2;
-}
+//stackElement * fillSecondStack(stackElement * element, int number) {
+//	stackElement * curElement1;				//”казатель на текущий элемент полученного стека делителей.
+//	stackElement * curElement2 = NULL;		//”казатель на текущий элемент формируемого стека делителей
+//	for (curElement1 = element; curElement1; curElement1 = curElement1->next) {
+//		if (number / curElement1->value != curElement1->value) {
+//			push(&curElement2, number / curElement1->value);
+//		}
+//	}
+//	return curElement2;
+//}
 
 int greetUser() {	//‘ункци€, вывод€ща€ приветствие и описание работы программы.
 	printf("¬ас привествует программа All_Divisors_Of_Natural_Number.\n\n"

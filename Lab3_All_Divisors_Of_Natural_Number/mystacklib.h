@@ -17,6 +17,12 @@ typedef struct stackElement {	//Структура, представляющая собой элемент стека
 //!!!Не забываем очищать память, в случае чего!!!
 stackElement* createElement(int inData);
 
+//Функция, проверяющая, существует ли элемент списка.
+int isEmpty(stackElement* element);
+
+//Функция, возвращающая значение элемента.
+int getValue(stackElement* element);
+
 //Функция, добавляющая новый элемент в стек. На вход принимает указатель на указатель на текущий элемент и значение, которое помещает в элемент.
 //Вызывает createElement, !!!Не забываем очищать память, вызывая pop!!!
 void push(stackElement** prevElement, int value);

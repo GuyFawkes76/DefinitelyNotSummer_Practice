@@ -16,7 +16,15 @@ stackElement * createElement(int inData) {
 	return element;
 }
 
+int isEmpty(stackElement * element) {
+	return !element;
+}
 
+int getValue(stackElement * element) {
+	if (isEmpty(element))	//Если элемента не существует, то возвращаем 0, потому что 0 - удобно, и он не может быть делителем.
+		return 0;
+	return element->value;
+}
 
 void push(stackElement ** prevElement, int value) {
 	stackElement* element;			//Указатель на новый создаваемый элемент списка
@@ -26,13 +34,13 @@ void push(stackElement ** prevElement, int value) {
 }
 
 int pop(stackElement** element) {
-	//if (isEmpty(*root))
-	//	return INT_MIN;
+	if (isEmpty(*element))	//Если элемента не существует, то возвращаем 0, потому что 0 - удобно, и он не может быть делителем.
+		return 0;
 	int tempValue;					//Указатель на временно хранящееся значение для его возврата.
 	stackElement* temp;				//Указатель на элемент, который нужно удалить.
 	temp = *element;
 	*element = (*element)->next;
-	tempValue = temp->value;
+	tempValue = getValue(temp);
 	free(temp);
 	return tempValue;
 }
