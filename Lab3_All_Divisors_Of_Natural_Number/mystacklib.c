@@ -16,14 +16,40 @@ stackElement * createElement(int inData) {
 	return element;
 }
 
-int isEmpty(stackElement * element) {
-	return !element;
+stackElement* fillAndPrintStack(int number, double numberSqrt) {
+	int divisor;						//Текущее число, проверяемое на делитель.
+	stackElement* curElement = NULL;	//Указатель на текущий элемент.
+	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем.
+		if (number % divisor == 0) {
+			push(&curElement, divisor);
+			printf(" %d", divisor);
+		}
+	}
+	return curElement;
 }
 
-int getValue(stackElement * element) {
+int getNumber() {
+	int number;
+	printf("Введите натуральное число n, для которого требуется найти все делители: ");
+	if (!scanf("%d", &number)) {
+		printf("Введённая строка не является натуральным числом, повторите попытку.");
+		exit(0);
+	}
+	if (number <= 0) {
+		printf("Введённое число не является натуральным, повторите попытку.");
+		exit(0);
+	}
+	return number;
+}
+
+int getValue(stackElement* element) {
 	if (isEmpty(element))	//Если элемента не существует, то возвращаем 0, потому что 0 - удобно, и он не может быть делителем.
 		return 0;
 	return element->value;
+}
+
+int isEmpty(stackElement * element) {
+	return !element;
 }
 
 void push(stackElement ** prevElement, int value) {
@@ -43,4 +69,15 @@ int pop(stackElement** element) {
 	tempValue = getValue(temp);
 	free(temp);
 	return tempValue;
+}
+
+void printDivisors(stackElement* firstHOD, stackElement* secondHOD) {
+	stackElement* curElement;				//Указатель на текущий элемент стека (сначала одного, потом второго) делителей.
+	for (curElement = firstHOD; curElement; ) {
+		printf(" %d", pop(&curElement));
+	}
+	for (curElement = secondHOD; curElement; ) {
+		printf(" %d", pop(&curElement));
+	}
+	printf(".");
 }

@@ -14,53 +14,33 @@
 //		
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
-// TODO; Отдельную функцию
+//
 #define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <malloc.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "mystacklib.h"
 
-//Функция, заполняющая первую половину стека делителей - до корня из number
-stackElement* fillFirstStack(int number, double numberSqrt);
 //Функция, заполняющая вторую половину стека делителей - после корня из number
-stackElement* fillSecondStack(stackElement* element, int number);
+//stackElement* fillSecondStack(stackElement* element, int number);
 
 void main() {
 	int number;					//Введённое число.
 	double numberSqrt;			//Квадратный корень из введённого числа number.
-	stackElement * firstHOD;	//Указатель на первую половину делителей (first Half Of Divisors) - до sqrt из number.
-	stackElement * secondHOD;	//Указатель на вторую половину делителей (second Half Of Divisors) - после sqrt из number.
+	stackElement * divisors;	//Указатель на список, содержащий первую половину делителей - до sqrt из number.
+//	stackElement * secondHOD;	//Указатель на вторую половину делителей (second Half Of Divisors) - после sqrt из number.
 
-	setlocale(LC_ALL, "RUS");
+	setlocale(LC_ALL, "RUS");	//Ставим русский язык для консоли, чтобы не было кракозябр.
 	
 	greetUser();
-	printf("Введите натуральное число n, для которого требуется найти все делители: ");
-	if (!scanf("%d", &number)) {
-		printf("Введённая строка не является натуральным числом, повторите попытку.");
-		return;
-	}
-	if (number <= 0) {
-		printf("Введённое число не является натуральным, повторите попытку.");
-		return;
-	}
-	numberSqrt = sqrt(number);
-	firstHOD = fillFirstStack(number, numberSqrt);
-	secondHOD = fillSecondStack(firstHOD, number);
-	printf("Делители числа %d:", number);
-	popAndPrintDivisors(firstHOD, secondHOD);
-}
+	number = getNumber();
 
-stackElement * fillFirstStack(int number, double numberSqrt) {
-	int divisor;						//Текущее число, проверяемое на делитель.
-	stackElement * curElement = NULL;	//Указатель на текущий элемент.
-	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем.
-		if (number % divisor == 0) {
-			push(&curElement, divisor);
-		}
-	}
-	return curElement;
+	//numberSqrt = sqrt(number);
+	divisors = fillStack(number, numberSqrt);
+	printf("Делители числа %d:", number);
+	//printDivisors(divisors, secondHOD);
 }
 
 //stackElement * fillSecondStack(stackElement * element, int number) {
@@ -86,15 +66,4 @@ int greetUser() {	//Функция, выводящая приветствие и описание работы программы.
 		"Вывести все делители заданного числа n в порядке возрастания\n"
 		"(без дополнительной сортировки, но с использованием стеков).\n\n"
 		"Автор: Степаненко Кирилл\n Группа: ИВТ-13БО.\n\n");
-}
-
-int popAndPrintDivisors(stackElement * firstHOD, stackElement * secondHOD) {
-	stackElement * curElement;				//Указатель на текущий элемент стека (сначала одного, потом второго) делителей.
-	for (curElement = firstHOD; curElement; ) {
-		printf(" %d", pop(&curElement));
-	}
-	for (curElement = secondHOD; curElement; ) {
-		printf(" %d", pop(&curElement));
-	}
-	printf(".");
 }
