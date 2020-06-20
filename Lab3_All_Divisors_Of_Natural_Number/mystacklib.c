@@ -22,15 +22,15 @@ void findAndPrintDivisors(int number) {
 	double numberSqrt = sqrt(number);
 	stackElement* curElement = NULL;	//Указатель на текущий элемент.
 	printf("Делители числа %d:", number);
-	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем.
+	for (divisor = 1; divisor < numberSqrt; divisor++) {	//Проверяем, является ли число делителем.
 		if (number % divisor == 0) {
 			push(&curElement, divisor);
 			printf(" %d", divisor);
 		}
 	}
-	for ( ; isEmpty(curElement); ) {
+	for ( ; !isEmpty(curElement); ) {
 		if (getValue(curElement) != numberSqrt) {
-			printf(" %d", number/pop(curElement));
+			printf(" %d", number/pop(&curElement));
 		}
 	}
 	printf(".");
