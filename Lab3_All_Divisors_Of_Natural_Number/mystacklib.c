@@ -21,13 +21,19 @@ void findAndPrintDivisors(int number) {
 	int divisor;						//Текущее число, проверяемое на делитель.
 	double numberSqrt = sqrt(number);
 	stackElement* curElement = NULL;	//Указатель на текущий элемент.
+	printf("Делители числа %d:", number);
 	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем.
 		if (number % divisor == 0) {
 			push(&curElement, divisor);
 			printf(" %d", divisor);
 		}
 	}
-	return curElement;
+	for ( ; isEmpty(curElement); ) {
+		if (getValue(curElement) != numberSqrt) {
+			printf(" %d", number/pop(curElement));
+		}
+	}
+	printf(".");
 }
 
 int getNumber() {
@@ -72,14 +78,3 @@ int pop(stackElement** element) {
 	free(temp);
 	return tempValue;
 }
-
-//void printDivisors(stackElement* firstHOD, stackElement* secondHOD) {
-//	stackElement* curElement;				//Указатель на текущий элемент стека (сначала одного, потом второго) делителей.
-//	for (curElement = firstHOD; curElement; ) {
-//		printf(" %d", pop(&curElement));
-//	}
-//	for (curElement = secondHOD; curElement; ) {
-//		printf(" %d", pop(&curElement));
-//	}
-//	printf(".");
-//}

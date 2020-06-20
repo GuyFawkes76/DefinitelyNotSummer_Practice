@@ -36,6 +36,4 @@ void push(stackElement** prevElement, int value);
 //Функция, удаляющая элемент из стека и возвращающая его значение. На вход принимает указатель на указатель на элемент.
 int pop(stackElement** element);
 
-//Функция, выводящая делители
-//void printDivisors(stackElement* firstHOD, stackElement* secondHOD);
 #endif	//MYSTACKLIB_H
