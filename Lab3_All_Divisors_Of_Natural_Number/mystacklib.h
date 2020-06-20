@@ -18,7 +18,7 @@ typedef struct stackElement {	//Структура, представляющая собой элемент стека
 stackElement* createElement(int inData);
 
 //Функция, заполняющая первую половину стека делителей - до корня из number
-stackElement* fillStack(int number, double numberSqrt);
+void findAndPrintDivisors(int number);
 
 //Функция, запрашивающая ввод натурального числа в консоль. При введении натурального числа возвращает его.
 int getNumber();
@@ -37,5 +37,5 @@ void push(stackElement** prevElement, int value);
 int pop(stackElement** element);
 
 //Функция, выводящая делители
-void printDivisors(stackElement* firstHOD, stackElement* secondHOD);
+//void printDivisors(stackElement* firstHOD, stackElement* secondHOD);
 #endif	//MYSTACKLIB_H

@@ -5,6 +5,7 @@
 //	Автор: Степаненко Кирилл
 //	Группа: ИВТ-13БО
 //
+#include <math.h>
 #include <stdio.h>
 #include "mystacklib.h"
 
@@ -16,8 +17,9 @@ stackElement * createElement(int inData) {
 	return element;
 }
 
-stackElement* fillAndPrintStack(int number, double numberSqrt) {
+void findAndPrintDivisors(int number) {
 	int divisor;						//Текущее число, проверяемое на делитель.
+	double numberSqrt = sqrt(number);
 	stackElement* curElement = NULL;	//Указатель на текущий элемент.
 	for (divisor = numberSqrt; divisor > 0; divisor--) {	//Проверяем, является ли число делителем.
 		if (number % divisor == 0) {
@@ -71,13 +73,13 @@ int pop(stackElement** element) {
 	return tempValue;
 }
 
-void printDivisors(stackElement* firstHOD, stackElement* secondHOD) {
-	stackElement* curElement;				//Указатель на текущий элемент стека (сначала одного, потом второго) делителей.
-	for (curElement = firstHOD; curElement; ) {
-		printf(" %d", pop(&curElement));
-	}
-	for (curElement = secondHOD; curElement; ) {
-		printf(" %d", pop(&curElement));
-	}
-	printf(".");
-}
+//void printDivisors(stackElement* firstHOD, stackElement* secondHOD) {
+//	stackElement* curElement;				//Указатель на текущий элемент стека (сначала одного, потом второго) делителей.
+//	for (curElement = firstHOD; curElement; ) {
+//		printf(" %d", pop(&curElement));
+//	}
+//	for (curElement = secondHOD; curElement; ) {
+//		printf(" %d", pop(&curElement));
+//	}
+//	printf(".");
+//}

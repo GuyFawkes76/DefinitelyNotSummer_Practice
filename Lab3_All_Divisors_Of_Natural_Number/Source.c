@@ -36,9 +36,7 @@ void main() {
 	
 	greetUser();
 	number = getNumber();
-
-	//numberSqrt = sqrt(number);
-	divisors = fillStack(number, numberSqrt);
+	findAndPrintDivisors(number);
 	printf("Делители числа %d:", number);
 	//printDivisors(divisors, secondHOD);
 }
