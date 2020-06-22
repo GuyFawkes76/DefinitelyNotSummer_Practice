@@ -7,11 +7,15 @@
 //
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "mystacklib.h"
 
 stackElement * createElement(int inData) {
 	struct stackElement* element;							//Указатель на новый создаваемый элемент списка.
-	element = (stackElement*)malloc(sizeof(stackElement));
+	if (!(element = (stackElement*)malloc(sizeof(stackElement)))) {
+		printf("Ошибка выделения памяти. Закройте ненужные приложения и повторите попытку.");
+		exit(0);
+	}
 	element->value = inData;
 	element->next = NULL;
 	return element;
@@ -22,7 +26,7 @@ void findAndPrintDivisors(int number) {
 	double numberSqrt = sqrt(number);
 	stackElement* curElement = NULL;	//Указатель на текущий элемент.
 	printf("Делители числа %d:", number);
-	for (divisor = 1; divisor < numberSqrt; divisor++) {	//Проверяем, является ли число делителем.
+	for (divisor = 1; divisor <= numberSqrt; divisor++) {	//Проверяем, является ли число делителем.
 		if (number % divisor == 0) {
 			push(&curElement, divisor);
 			printf(" %d", divisor);
@@ -31,6 +35,9 @@ void findAndPrintDivisors(int number) {
 	for ( ; !isEmpty(curElement); ) {
 		if (getValue(curElement) != numberSqrt) {
 			printf(" %d", number/pop(&curElement));
+		}
+		else {
+			pop(&curElement);
 		}
 	}
 	printf(".");
@@ -44,7 +51,7 @@ int getNumber() {
 		exit(0);
 	}
 	if (number <= 0) {
-		printf("Введённое число не является натуральным, повторите попытку.");
+		printf("Введённое число или не является натуральным, или больше %d, повторите попытку.", INT_MAX);
 		exit(0);
 	}
 	return number;

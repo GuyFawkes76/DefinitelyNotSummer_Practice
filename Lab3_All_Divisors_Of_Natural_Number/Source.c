@@ -28,7 +28,6 @@ void main() {
 	int number;					//¬ведЄнное число.
 	double numberSqrt;			// вадратный корень из введЄнного числа number.
 	stackElement * divisors;	//”казатель на список, содержащий первую половину делителей - до sqrt из number.
-//	stackElement * secondHOD;	//”казатель на вторую половину делителей (second Half Of Divisors) - после sqrt из number.
 
 	setlocale(LC_ALL, "RUS");	//—тавим русский €зык дл€ консоли, чтобы не было кракоз€бр.
 	
