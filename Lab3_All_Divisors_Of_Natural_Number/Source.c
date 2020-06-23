@@ -25,15 +25,16 @@
 
 
 void main() {
-	int number;					//¬ведЄнное число.
-	double numberSqrt;			// вадратный корень из введЄнного числа number.
-	stackElement * divisors;	//”казатель на список, содержащий первую половину делителей - до sqrt из number.
+	int number;						//¬ведЄнное число.
+	double numberSqrt;				// вадратный корень из введЄнного числа number.
+	stackElement * divisors = NULL;	//”казатель на список, содержащий первую половину делителей - до sqrt из number.
 
 	setlocale(LC_ALL, "RUS");	//—тавим русский €зык дл€ консоли, чтобы не было кракоз€бр.
 	
 	greetUser();
 	number = getNumber();
-	findAndPrintDivisors(number);
+	divisors = findAndPrintDivisors(number);
+	freeStack(divisors);
 }
 
 int greetUser() {	//‘ункци€, вывод€ща€ приветствие и описание работы программы.

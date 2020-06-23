@@ -21,10 +21,10 @@ stackElement * createElement(int inData) {
 	return element;
 }
 
-void findAndPrintDivisors(int number) {
+stackElement * findAndPrintDivisors(int number) {
 	int divisor;						//Текущее число, проверяемое на делитель.
 	double numberSqrt = sqrt(number);
-	stackElement* curElement = NULL;	//Указатель на текущий элемент.
+	stackElement * curElement = NULL;	//Указатель на текущий элемент.
 	printf("Делители числа %d:", number);
 	for (divisor = 1; divisor <= numberSqrt; divisor++) {	//Проверяем, является ли число делителем.
 		if (number % divisor == 0) {
@@ -36,11 +36,17 @@ void findAndPrintDivisors(int number) {
 		if (getValue(curElement) != numberSqrt) {
 			printf(" %d", number/pop(&curElement));
 		}
-		else {
+		else
 			pop(&curElement);
-		}
 	}
 	printf(".");
+	return curElement;
+}
+
+int freeStack(stackElement * element) {
+	for ( ; !isEmpty(element); )
+		pop(&element);
+	return 0;
 }
 
 int getNumber() {
@@ -57,7 +63,7 @@ int getNumber() {
 	return number;
 }
 
-int getValue(stackElement* element) {
+int getValue(stackElement * element) {
 	if (isEmpty(element))	//Если элемента не существует, то возвращаем 0, потому что 0 - удобно, и он не может быть делителем.
 		return 0;
 	return element->value;
@@ -74,7 +80,7 @@ void push(stackElement ** prevElement, int value) {
 	*prevElement = element;
 }
 
-int pop(stackElement** element) {
+int pop(stackElement ** element) {
 	if (isEmpty(*element))	//Если элемента не существует, то возвращаем 0, потому что 0 - удобно, и он не может быть делителем.
 		return 0;
 	int tempValue;					//Указатель на временно хранящееся значение для его возврата.
